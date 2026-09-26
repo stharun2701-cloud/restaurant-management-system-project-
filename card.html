@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brandemic Portfolio - S. Tharun</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Premium Feel */
+        :root {
+            --primary: #1f2937;
+            --accent: #6366f1;
+            --text-main: #374151;
+            --text-muted: #6b7280;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        /* Grid Layout */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            justify-content: center;
+        }
+
+        /* Premium Card Styling */
+        .card {
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-12px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Image Section */
+        .card-image {
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .card:hover .card-image img {
+            transform: scale(1.1);
+        }
+
+        /* Floating Badge */
+        .badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Content Section */
+        .card-content {
+            padding: 28px;
+            flex-grow: 1;
+        }
+
+        .card-content h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .card-content p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        /* Footer Section */
+        .card-footer {
+            padding: 20px 28px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-view {
+            text-decoration: none;
+            background: var(--primary);
+            color: var(--white);
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .btn-view:hover {
+            background: var(--accent);
+        }
+
+        .tech-stack {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Internship Projects</h1>
+        <p>Web Development Intern @ Brandemic (2026)</p>
+    </div>
+
+    <div class="container">
+        
+        <div class="card">
+            <div class="card-image">
+                <div class="badge">Artificial Intelligence</div>
+                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80" alt="Code">
+            </div>
+            <div class="card-content">
+                <h3>AI Code Optimizer</h3>
+                <p>An intelligent tool that analyzes source code to provide optimized versions based on performance and memory metrics. Features a side-by-side comparison UI.</p>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="btn-view">View Project</a>
+                <span class="tech-stack">JS • AI API</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-image">
+                <div class="badge">Full Stack</div>
+                <img src="https://www.boekelsci.com/media/wysiwyg/01-what-is-the-most-important-equipment-for-blood-banking.jpg" alt="Medical">
+            </div>
+            <div class="card-content">
+                <h3>Blood Bank Portal</h3>
+                <p>A comprehensive management system with secure Admin CRUD operations for donor tracking and inventory management at local branches.</p>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="btn-view">View Project</a>
+                <span class="tech-stack">CRUD • SQL</span>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
