@@ -1,57 +1,36 @@
 <?php
 
-include 'components/connect.php';
+include '../components/connect.php';
 
 session_start();
 
-if(isset($_SESSION['user_id'])){
-   $user_id = $_SESSION['user_id'];
-}else{
-   $user_id = '';
-   header('location:home.php');
-};
+$admin_id = $_SESSION['admin_id'];
+
+if(!isset($admin_id)){
+   header('location:admin_login.php');
+}
 
 if(isset($_POST['submit'])){
 
    $name = $_POST['name'];
    $name = filter_var($name, FILTER_SANITIZE_STRING);
 
-   $email = $_POST['email'];
-   $email = filter_var($email, FILTER_SANITIZE_STRING);
-   $number = $_POST['number'];
-   $number = filter_var($number, FILTER_SANITIZE_STRING);
-
    if(!empty($name)){
-      $update_name = $conn->prepare("UPDATE `users` SET name = ? WHERE id = ?");
-      $update_name->execute([$name, $user_id]);
-   }
-
-   if(!empty($email)){
-      $select_email = $conn->prepare("SELECT * FROM `users` WHERE email = ?");
-      $select_email->execute([$email]);
-      if($select_email->rowCount() > 0){
-         $message[] = 'email already taken!';
+      $select_name = $conn->prepare("SELECT * FROM `admin` WHERE name = ?");
+      $select_name->execute([$name]);
+      if($select_name->rowCount() > 0){
+         $message[] = 'username already taken!';
       }else{
-         $update_email = $conn->prepare("UPDATE `users` SET email = ? WHERE id = ?");
-         $update_email->execute([$email, $user_id]);
+         $update_name = $conn->prepare("UPDATE `admin` SET name = ? WHERE id = ?");
+         $update_name->execute([$name, $admin_id]);
+         $message[] = 'username updated successfully!';
       }
    }
 
-   if(!empty($number)){
-      $select_number = $conn->prepare("SELECT * FROM `users` WHERE number = ?");
-      $select_number->execute([$number]);
-      if($select_number->rowCount() > 0){
-         $message[] = 'number already taken!';
-      }else{
-         $update_number = $conn->prepare("UPDATE `users` SET number = ? WHERE id = ?");
-         $update_number->execute([$number, $user_id]);
-      }
-   }
-   
    $empty_pass = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
-   $select_prev_pass = $conn->prepare("SELECT password FROM `users` WHERE id = ?");
-   $select_prev_pass->execute([$user_id]);
-   $fetch_prev_pass = $select_prev_pass->fetch(PDO::FETCH_ASSOC);
+   $select_old_pass = $conn->prepare("SELECT password FROM `admin` WHERE id = ?");
+   $select_old_pass->execute([$admin_id]);
+   $fetch_prev_pass = $select_old_pass->fetch(PDO::FETCH_ASSOC);
    $prev_pass = $fetch_prev_pass['password'];
    $old_pass = sha1($_POST['old_pass']);
    $old_pass = filter_var($old_pass, FILTER_SANITIZE_STRING);
@@ -67,14 +46,14 @@ if(isset($_POST['submit'])){
          $message[] = 'confirm password not matched!';
       }else{
          if($new_pass != $empty_pass){
-            $update_pass = $conn->prepare("UPDATE `users` SET password = ? WHERE id = ?");
-            $update_pass->execute([$confirm_pass, $user_id]);
+            $update_pass = $conn->prepare("UPDATE `admin` SET password = ? WHERE id = ?");
+            $update_pass->execute([$confirm_pass, $admin_id]);
             $message[] = 'password updated successfully!';
          }else{
             $message[] = 'please enter a new password!';
          }
       }
-   }  
+   }
 
 }
 
@@ -86,54 +65,121 @@ if(isset($_POST['submit'])){
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>update profile</title>
+   <title>Update Profile | Admin</title>
 
-   <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+   <link rel="stylesheet" href="../css/admin_style.css">
 
-   <!-- custom css file link  -->
-   <link rel="stylesheet" href="css/style.css">
+   <style>
+      :root {
+         --primary-color: #e74c3c;
+         --dark-bg: #1e272e;
+         --glass-bg: rgba(255, 255, 255, 0.95);
+         --text-main: #2d3436;
+      }
+
+      body {
+         background: linear-gradient(rgba(30, 39, 46, 0.85), rgba(30, 39, 46, 0.85)), url('../images/admin-bg.jpg') no-repeat;
+         background-size: cover;
+         background-position: center;
+         background-attachment: fixed;
+         min-height: 100vh;
+      }
+
+      .form-container {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         padding: 5rem 2rem;
+         min-height: 80vh;
+      }
+
+      .form-container form {
+         background: var(--glass-bg);
+         backdrop-filter: blur(15px);
+         padding: 4rem;
+         width: 45rem;
+         border-radius: 2.5rem;
+         box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+         text-align: center;
+         border: 1px solid rgba(255,255,255,0.3);
+      }
+
+      .form-container form h3 {
+         font-size: 3rem;
+         color: var(--text-main);
+         text-transform: uppercase;
+         margin-bottom: 2.5rem;
+         font-weight: 800;
+         letter-spacing: 1px;
+      }
+
+      .form-container form .box {
+         width: 100%;
+         margin: 1.2rem 0;
+         padding: 1.5rem 2rem;
+         font-size: 1.7rem;
+         color: var(--text-main);
+         border-radius: 1.2rem;
+         background-color: #f1f3f6;
+         border: 2px solid transparent;
+         transition: all 0.3s ease;
+      }
+
+      .form-container form .box:focus {
+         border-color: var(--primary-color);
+         background-color: #fff;
+         box-shadow: 0 5px 15px rgba(231, 76, 60, 0.15);
+         outline: none;
+      }
+
+      .form-container form .btn {
+         width: 100%;
+         margin-top: 2rem;
+         background-color: var(--primary-color);
+         color: #fff;
+         padding: 1.5rem;
+         font-size: 1.8rem;
+         font-weight: 700;
+         border-radius: 1.2rem;
+         cursor: pointer;
+         transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+         text-transform: uppercase;
+      }
+
+      .form-container form .btn:hover {
+         background-color: #c0392b;
+         transform: translateY(-5px);
+         box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+      }
+
+      @media (max-width: 480px) {
+         .form-container form {
+            width: 100%;
+            padding: 3rem 2rem;
+         }
+      }
+   </style>
 
 </head>
 <body>
-   
-<!-- header section starts  -->
-<?php include 'components/user_header.php'; ?>
-<!-- header section ends -->
 
-<section class="form-container update-form">
+<?php include '../components/admin_header.php' ?>
 
-   <form action="" method="post">
-      <h3>update profile</h3>
-      <input type="text" name="name" placeholder="<?= $fetch_profile['name']; ?>" class="box" maxlength="50">
-      <input type="email" name="email" placeholder="<?= $fetch_profile['email']; ?>" class="box" maxlength="50" oninput="this.value = this.value.replace(/\s/g, '')">
-      <input type="number" name="number" placeholder="<?= $fetch_profile['number']; ?>"" class="box" min="0" max="9999999999" maxlength="10">
-      <input type="password" name="old_pass" placeholder="enter your old password" class="box" maxlength="50" oninput="this.value = this.value.replace(/\s/g, '')">
-      <input type="password" name="new_pass" placeholder="enter your new password" class="box" maxlength="50" oninput="this.value = this.value.replace(/\s/g, '')">
-      <input type="password" name="confirm_pass" placeholder="confirm your new password" class="box" maxlength="50" oninput="this.value = this.value.replace(/\s/g, '')">
-      <input type="submit" value="update now" name="submit" class="btn">
+<section class="form-container">
+
+   <form action="" method="POST">
+      <h3>Update Profile</h3>
+      <input type="text" name="name" maxlength="20" class="box" oninput="this.value = this.value.replace(/\s/g, '')" placeholder="<?= $fetch_profile['name']; ?>">
+      <input type="password" name="old_pass" maxlength="20" placeholder="Old Password" class="box" oninput="this.value = this.value.replace(/\s/g, '')">
+      <input type="password" name="new_pass" maxlength="20" placeholder="New Password" class="box" oninput="this.value = this.value.replace(/\s/g, '')">
+      <input type="password" name="confirm_pass" maxlength="20" placeholder="Confirm New Password" class="box" oninput="this.value = this.value.replace(/\s/g, '')">
+      <input type="submit" value="Update Now" name="submit" class="btn">
    </form>
 
 </section>
 
-
-
-
-
-
-
-
-
-
-<?php include 'components/footer.php'; ?>
-
-
-
-
-
-
-<!-- custom js file link  -->
-<script src="js/script.js"></script>
+<script src="../js/admin_script.js"></script>
 
 </body>
 </html>
